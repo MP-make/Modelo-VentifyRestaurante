@@ -1,4 +1,19 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ventify Restaurante
+
+Web app progresiva para restaurantes que conecta con el SaaS POS Ventify, soportando 3 modos: delivery (e-commerce), waiter (toma pedidos), y menu (carta digital).
+
+## Modos
+
+- **Delivery (/)**: E-commerce para pedidos a domicilio.
+- **Waiter (/waiter)**: Toma pedidos rápida para meseros, protegida con login/PIN.
+- **Menu (/menu, /qr)**: Carta digital para clientes en mesa.
+
+## Stack Tecnológico
+
+- Next.js 14+ (App Router, TypeScript)
+- Tailwind CSS
+- Zustand para estado
+- API de Ventify
 
 ## Getting Started
 
