@@ -64,7 +64,7 @@ export default function ContactoSection() {
                 </div>
                 <h4 className="font-semibold mb-2">Teléfono</h4>
                 <p className="text-stone-400 text-sm">
-                  +51 999 888 777<br />
+                  +51 986 215 989<br />
                   (01) 234-5678
                 </p>
               </div>
@@ -75,7 +75,7 @@ export default function ContactoSection() {
                 </div>
                 <h4 className="font-semibold mb-2">Email</h4>
                 <p className="text-stone-400 text-sm">
-                  info@ventify.com.pe<br />
+                  ventify_restaurante@gmail.com<br />
                   pedidos@ventify.com.pe
                 </p>
               </div>
