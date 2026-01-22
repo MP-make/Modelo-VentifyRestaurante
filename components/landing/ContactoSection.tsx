@@ -75,7 +75,7 @@ export default function ContactoSection() {
                 </div>
                 <h4 className="font-semibold mb-2">Email</h4>
                 <p className="text-stone-400 text-sm">
-                  info@ventify.com.pe<br />
+                  ventify_restaurante@gmail.com<br />
                   pedidos@ventify.com.pe
                 </p>
               </div>
