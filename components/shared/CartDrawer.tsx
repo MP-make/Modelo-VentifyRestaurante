@@ -82,6 +82,7 @@ export const CartDrawer = ({ visible, onClose, bebidas }: CartDrawerProps) => {
                       src={item.image}
                       alt={item.title}
                       fill
+                      sizes="48px"
                       className="object-cover"
                     />
                   </div>
@@ -121,6 +122,7 @@ export const CartDrawer = ({ visible, onClose, bebidas }: CartDrawerProps) => {
                         src={bebida.image}
                         alt={bebida.title}
                         fill
+                        sizes="40px"
                         className="object-cover"
                       />
                     </div>

@@ -1,104 +1,160 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, ShoppingBag, Menu, X } from 'lucide-react';
+import Image from 'next/image';
+import { Search, ShoppingBag, Menu, X, User } from 'lucide-react';
 import { useSearchStore } from '@/lib/stores/search';
 import { useCartStore } from '@/lib/stores/cart';
 import { useUIStore } from '@/lib/stores/ui';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { query, setQuery } = useSearchStore();
   const { items } = useCartStore();
   const { setIsCartOpen } = useUIStore();
 
+  // Detectar scroll para cambiar estilo del navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <nav className="bg-white shadow-md fixed top-0 w-full z-50">
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+      isScrolled 
+        ? 'glass-effect shadow-soft' 
+        : 'bg-white/95 shadow-sm'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-blue-600">
-              Ventify <span className="text-black">Restaurante</span>
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2 group">
+            <Image
+              src="/ventify_logo.png"
+              alt="Ventify"
+              width={40}
+              height={40}
+              className="object-contain group-hover:scale-105 transition-transform"
+              style={{ width: 'auto', height: 'auto' }}
+            />
+            <div className="text-xl font-bold">
+              <span className="gradient-text">Ventify</span>
+              <span className="text-stone-700"> Restaurante</span>
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-6">
+            {/* Link al Menú */}
+            <Link
+              href="/menu"
+              className="text-stone-600 hover:text-amber-600 font-medium transition-colors"
+            >
+              Ver Menú
+            </Link>
+
+            {/* Buscador */}
+            <div className="relative group">
+              <Search className="absolute left-3 top-2.5 text-stone-400 group-focus-within:text-amber-600 transition-colors" size={18} />
               <input
                 type="text"
                 placeholder="Buscar productos..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-64 pl-10 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-400 focus:bg-white transition-all"
               />
             </div>
 
+            {/* Carrito */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors relative"
+              className="flex items-center space-x-2 text-stone-600 hover:text-amber-700 transition-colors relative group"
             >
-              <div className="relative">
-                <ShoppingBag size={20} />
+              <div className="relative p-2 rounded-full group-hover:bg-amber-50 transition-colors">
+                <ShoppingBag size={22} />
                 {items.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                     {items.length}
                   </span>
                 )}
               </div>
-              <span>Carrito</span>
+              <span className="font-medium">Carrito</span>
             </button>
 
+            {/* Login */}
             <Link
               href="/login"
-              className="text-gray-700 hover:text-blue-600 transition-colors"
+              className="btn-primary flex items-center space-x-2"
             >
-              Iniciar Sesión
+              <User size={18} />
+              <span>Iniciar Sesión</span>
             </Link>
           </div>
 
+          {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-gray-700"
+            className="md:hidden text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition-colors"
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
+        {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden pb-4">
+          <div className="md:hidden pb-4 pt-2 border-t border-stone-200 animate-fade-in-up">
             <div className="relative mb-4">
-              <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+              <Search className="absolute left-3 top-2.5 text-stone-400" size={18} />
               <input
                 type="text"
                 placeholder="Buscar productos..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500/50"
               />
             </div>
 
-            <button
-              onClick={() => setIsCartOpen(true)}
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors relative mb-4"
-            >
-              <div className="relative">
-                <ShoppingBag size={20} />
-                {items.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {items.length}
-                  </span>
-                )}
-              </div>
-              <span>Carrito</span>
-            </button>
+            <div className="space-y-2">
+              <Link
+                href="/menu"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center space-x-3 w-full text-stone-700 hover:text-amber-700 hover:bg-amber-50 p-3 rounded-xl transition-colors"
+              >
+                <span className="text-xl">🍽️</span>
+                <span className="font-medium">Ver Menú Completo</span>
+              </Link>
 
-            <Link
-              href="/login"
-              className="text-gray-700 hover:text-blue-600 transition-colors"
-            >
-              Iniciar Sesión
-            </Link>
+              <button
+                onClick={() => {
+                  setIsCartOpen(true);
+                  setIsMenuOpen(false);
+                }}
+                className="flex items-center space-x-3 w-full text-stone-700 hover:text-amber-700 hover:bg-amber-50 p-3 rounded-xl transition-colors"
+              >
+                <div className="relative">
+                  <ShoppingBag size={22} />
+                  {items.length > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {items.length}
+                    </span>
+                  )}
+                </div>
+                <span className="font-medium">Carrito</span>
+              </button>
+
+              <Link
+                href="/login"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center justify-center space-x-3 w-full btn-primary"
+              >
+                <User size={22} />
+                <span>Iniciar Sesión</span>
+              </Link>
+            </div>
           </div>
         )}
       </div>

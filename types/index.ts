@@ -11,6 +11,7 @@ export interface Product {
   category: string;
   description?: string;
   stock: number;
+  featured?: boolean;  // Producto destacado en landing
 }
 
 export interface CartItem extends Product {
@@ -22,12 +23,16 @@ export interface CartItem extends Product {
 export interface OrderPayload {
   customerName: string;
   phone?: string;
+  email?: string;       // Email del cliente
   address?: string;
   tableNumber?: string; // Exclusivo para modo 'waiter'
+  notes?: string;       // Notas generales + info de pago
   type: 'DELIVERY' | 'DINE_IN';
   items: {
     productId: string;
     quantity: number;
+    price?: number;     // Precio unitario del producto
+    name?: string;      // Nombre del producto (para referencia)
   }[];
   total: number;
 }
