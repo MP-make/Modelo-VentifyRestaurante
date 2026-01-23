@@ -12,6 +12,8 @@ export interface Product {
   description?: string;
   stock: number;
   featured?: boolean;  // Producto destacado en landing
+  isMenuDelDia?: boolean; // Si es parte del menú del día (configurado en Ventify)
+  minPrice?: number;   // Precio mínimo permitido para descuentos (desde Ventify)
 }
 
 export interface CartItem extends Product {
@@ -21,18 +23,22 @@ export interface CartItem extends Product {
 
 // Estructura para enviar el pedido a Ventify
 export interface OrderPayload {
-  customerName: string;
-  phone?: string;
-  email?: string;       // Email del cliente
-  address?: string;
+  customer: {
+    name: string;
+    email?: string;
+    phone: string;
+    address?: string;
+  };
   tableNumber?: string; // Exclusivo para modo 'waiter'
   notes?: string;       // Notas generales + info de pago
-  type: 'DELIVERY' | 'DINE_IN';
+  paymentMethod?: string; // 'Efectivo', 'Yape', 'Plin', etc.
+  type?: 'DELIVERY' | 'DINE_IN';
   items: {
-    productId: string;
+    id: string;
+    title: string;
     quantity: number;
-    price?: number;     // Precio unitario del producto
-    name?: string;      // Nombre del producto (para referencia)
+    price: number;
+    notes?: string;
   }[];
   total: number;
 }

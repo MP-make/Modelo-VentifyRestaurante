@@ -71,8 +71,9 @@ export default function CheckoutPage() {
     // Validation
     const newErrors: Record<string, boolean> = {
       name: !customerName.trim(),
-      phone: !phone.trim(),
+      phone: phone.length !== 9 || !phone.startsWith('9'),
       address: !address.trim(),
+      email: !!email && !(/^[^\s@]+@[^\s@]+\.(com|pe)$/i.test(email)),
       paymentMethod: !paymentMethod,
     };
     
@@ -96,20 +97,22 @@ export default function CheckoutPage() {
     
     const fullNotes = [paymentNote, notes].filter(Boolean).join(' | ');
 
-    // Payload para Ventify API
+    // Payload para Ventify API con estructura correcta
     const payload = {
-      customerName,
-      phone,
-      email: email || `${phone}@delivery.ventify.pe`, // Email requerido por Ventify
-      address,
+      customer: {
+        name: customerName,
+        email: email || undefined,
+        phone: phone,
+        address: address,
+      },
       notes: fullNotes,
-      type: 'DELIVERY' as const,
+      paymentMethod: paymentMethod,
       items: items.map(item => ({
-        productId: item.id,
+        id: item.id,
+        title: item.title,
         quantity: item.quantity,
         price: item.price,
-        name: item.title,
-        category: item.category,
+        notes: item.notes || '',
       })),
       total,
     };
@@ -204,13 +207,19 @@ export default function CheckoutPage() {
                     <input
                       type="tel"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all ${
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, ''); // Solo números
+                        if (value.length === 0 || (value[0] === '9' && value.length <= 9)) {
+                          setPhone(value);
+                        }
+                      }}
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all text-gray-900 ${
                         errors.phone ? 'border-red-500 bg-red-50' : 'border-stone-200'
                       }`}
-                      placeholder="999 888 777"
+                      placeholder="999888777"
+                      maxLength={9}
                     />
-                    {errors.phone && <p className="text-red-500 text-sm mt-1">Campo obligatorio</p>}
+                    {errors.phone && <p className="text-red-500 text-sm mt-1">Debe ser un número de 9 dígitos que empiece con 9</p>}
                   </div>
                 </div>
 

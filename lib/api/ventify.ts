@@ -55,6 +55,8 @@ export const fetchProducts = async (): Promise<Product[]> => {
       description: item.description || '',
       stock: item.stock || 0,
       featured: item.isFeatured || false, // Campo de Ventify para destacados
+      isMenuDelDia: item.isMenuDelDia || false, // Campo de Ventify
+      minPrice: item.minPrice || item.price * 0.5, // Precio mínimo (50% por defecto si no existe)
     }));
 
   } catch (error) {
@@ -70,24 +72,36 @@ export const createOrder = async (payload: OrderPayload): Promise<any> => {
 
   const endpoint = `${API_URL}/api/public/stores/${ACCOUNT_ID}/sale-requests`;
 
-  // Formatear payload para Ventify API - campos en raíz
+  // MAPEO EXACTO PARA VENTIFY (SEGÚN ROUTE.TS)
   const ventifyPayload = {
-    customerName: payload.customerName,
-    customerPhone: payload.phone || '',
-    customerEmail: payload.email || '',
-    customerAddress: payload.address || '',
-    type: payload.type,
-    tableNumber: payload.tableNumber,
+    // 1. Datos del Cliente (En la raíz, NO dentro de un objeto 'customer')
+    customerName: payload.customer.name,
+    customerEmail: payload.customer.email || "cliente@web.com", // Fallback si no hay email
+    customerPhone: payload.customer.phone,
+
+    // 2. Datos de Envío y Pago
+    shippingAddress: {
+      address: payload.customer.address || "Recojo en tienda"
+    },
+    preferredPaymentMethod: payload.paymentMethod || 'Efectivo', // 'Yape', 'Plin', etc.
     notes: payload.notes || '',
-    items: payload.items.map(item => ({
-      productId: item.productId,
-      name: item.name || '',
-      quantity: item.quantity,
-      unitPrice: item.price || 0,
-      subtotal: (item.price || 0) * item.quantity,
-    })),
+
+    // 3. Totales
     total: payload.total,
+    subtotal: payload.total, // Por ahora igual al total (o calcula antes impuestos si aplica)
+
+    // 4. ITEMS (Aquí estaba el error)
+    items: payload.items.map(item => ({
+      productId: item.id,
+      productName: item.title,      // CORRECCIÓN: Backend espera 'productName', no 'name'
+      quantity: item.quantity,
+      price: item.price,            // CORRECCIÓN: Backend espera 'price', no 'unitPrice'
+      sku: '',                      // Opcional
+      notes: item.notes || ''       // Notas del item (sin mayonesa, etc)
+    }))
   };
+
+  console.log("🚀 Enviando a Ventify:", JSON.stringify(ventifyPayload, null, 2));
 
   try {
     const response = await fetch(endpoint, {
@@ -99,18 +113,17 @@ export const createOrder = async (payload: OrderPayload): Promise<any> => {
       body: JSON.stringify(ventifyPayload),
     });
 
-    const responseData = await response.json().catch(() => ({}));
-
-    // DEBUG temporal - ver respuesta de Ventify
-    console.log('🔍 Ventify Response:', response.status, responseData);
-    console.log('🔍 Payload enviado:', JSON.stringify(ventifyPayload, null, 2));
-
     if (!response.ok) {
-      throw new Error(responseData.message || responseData.error || JSON.stringify(responseData) || 'No se pudo enviar el pedido');
+      const errorData = await response.text();
+      console.error("❌ Error Ventify:", errorData);
+      throw new Error(`Error ${response.status}: ${errorData}`);
     }
 
-    return responseData;
+    const result = await response.json();
+    console.log("✅ Respuesta exitosa de Ventify:", result);
+    return result;
   } catch (error) {
+    console.error('Failed to create order:', error);
     throw error;
   }
 };

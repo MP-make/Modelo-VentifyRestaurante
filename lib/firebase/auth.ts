@@ -57,12 +57,14 @@ export const determineUserRole = async (email: string): Promise<'client' | 'staf
  * Iniciar sesión con email y contraseña
  */
 export const loginWithEmail = async (email: string, password: string): Promise<{ user: User; role: string }> => {
+  if (!auth) throw new Error('Firebase authentication not configured');
+  if (!db) throw new Error('Firebase Firestore not configured');
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const role = await determineUserRole(email);
     
     // Actualizar rol en Firestore si existe el documento
-    const userRef = doc(db, 'users', userCredential.user.uid);
+    const userRef = doc(db!, 'users', userCredential.user.uid);
     const userSnap = await getDoc(userRef);
     
     if (userSnap.exists()) {
@@ -86,6 +88,8 @@ export const registerClient = async (
   phone?: string,
   dni?: string
 ): Promise<User> => {
+  if (!auth) throw new Error('Firebase authentication not configured');
+  if (!db) throw new Error('Firebase Firestore not configured');
   try {
     // 1. Crear cuenta en Firebase Auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -101,7 +105,7 @@ export const registerClient = async (
       createdAt: new Date(),
     };
     
-    await setDoc(doc(db, 'users', userCredential.user.uid), userData);
+    await setDoc(doc(db!, 'users', userCredential.user.uid), userData);
     
     // 3. Sincronizar con Ventify (opcional, si tienes el endpoint)
     await syncClientWithVentify(userData);
@@ -153,6 +157,7 @@ const syncClientWithVentify = async (userData: UserData): Promise<void> => {
  * Cerrar sesión
  */
 export const logout = async (): Promise<void> => {
+  if (!auth) return;
   await signOut(auth);
 };
 
@@ -160,8 +165,9 @@ export const logout = async (): Promise<void> => {
  * Obtener datos del usuario desde Firestore
  */
 export const getUserData = async (uid: string): Promise<UserData | null> => {
+  if (!db) return null;
   try {
-    const userRef = doc(db, 'users', uid);
+    const userRef = doc(db!, 'users', uid);
     const userSnap = await getDoc(userRef);
     
     if (userSnap.exists()) {
@@ -178,6 +184,7 @@ export const getUserData = async (uid: string): Promise<UserData | null> => {
  * Escuchar cambios en el estado de autenticación
  */
 export const onAuthChange = (callback: (user: User | null) => void) => {
+  if (!auth) return () => {};
   return onAuthStateChanged(auth, callback);
 };
 

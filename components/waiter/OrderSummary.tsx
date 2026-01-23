@@ -16,12 +16,19 @@ export const OrderSummary = ({ tableId }: OrderSummaryProps) => {
     }
 
     const payload = {
-      customerName: `Mesa ${tableId}`,
+      customer: {
+        name: `Mesa ${tableId}`,
+        phone: '000000000', // Teléfono dummy para mesas
+        address: `Mesa ${tableId} - Restaurante`,
+      },
       tableNumber: tableId,
       type: 'DINE_IN' as const,
       items: items.map(item => ({
-        productId: item.id,
+        id: item.id,
+        title: item.title,
         quantity: item.quantity,
+        price: item.price,
+        notes: item.notes || '',
       })),
       total: getTotal(),
     };

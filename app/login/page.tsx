@@ -7,6 +7,8 @@ import { Mail, Lock, Eye, EyeOff, Loader2, ChefHat, Users } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth";
 import { loginWithEmail } from "@/lib/firebase/auth";
 
+export const dynamic = 'force-dynamic';
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,10 +25,47 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      // Autenticación con Firebase
+      // 🔥 MOCK LOGIN TEMPORAL - Solo para desarrollo
+      // Comentar esto cuando Firebase esté configurado
+      
+      // Determinar rol basado en el email
+      let mockRole: 'client' | 'staff' | 'admin' = 'client';
+      const emailLower = email.toLowerCase();
+      
+      if (emailLower.includes('admin')) {
+        mockRole = 'admin';
+      } else if (
+        emailLower.includes('mesero') || 
+        emailLower.includes('cajero') || 
+        emailLower.includes('staff') ||
+        emailLower.includes('@ventify')
+      ) {
+        mockRole = 'staff';
+      }
+
+      // Simular usuario mock
+      login({
+        uid: 'mock-' + Date.now(),
+        email: email,
+        name: email.split('@')[0],
+        role: mockRole,
+      });
+
+      // Smart Redirect basado en rol
+      if (mockRole === 'staff' || mockRole === 'admin') {
+        router.push("/waiter");
+      } else {
+        router.push("/");
+      }
+      
+      return; // Salir aquí para evitar la autenticación real
+      
+      // 🔥 FIN DEL MOCK LOGIN
+      
+      // Código original con Firebase (comentado temporalmente)
+      /*
       const { user, role } = await loginWithEmail(email, password);
       
-      // Guardar en el store
       login({
         uid: user.uid,
         email: user.email || email,
@@ -34,12 +73,12 @@ export default function LoginPage() {
         role: role as 'client' | 'staff' | 'admin',
       });
 
-      // Smart Redirect basado en rol
       if (role === 'staff' || role === 'admin') {
         router.push("/waiter");
       } else {
         router.push("/");
       }
+      */
     } catch (err: any) {
       setError(err.message || "Error al iniciar sesión");
     } finally {
