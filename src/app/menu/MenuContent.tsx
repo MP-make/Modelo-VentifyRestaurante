@@ -1,37 +1,28 @@
 "use client";
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { fetchProducts } from '@/lib/api/ventify';
+import { useState } from 'react';
 import { Product } from '@/types';
 import { ProductCard } from '@/components/shared/ProductCard';
 import { CartDrawer } from '@/components/shared/CartDrawer';
 import { useUIStore } from '@/lib/stores/ui';
 import { useCartStore } from '@/lib/stores/cart';
-import { ArrowLeft, ShoppingBag, Search, BookOpen, UtensilsCrossed, Beer, Drumstick, LayoutGrid } from 'lucide-react';
+import { Search, BookOpen, UtensilsCrossed, Beer, Drumstick, LayoutGrid, ShoppingBag } from 'lucide-react';
 
-export default function MenuPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+interface MenuContentProps {
+  initialProducts: Product[];
+}
+
+export default function MenuContent({ initialProducts }: MenuContentProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { isCartOpen, setIsCartOpen } = useUIStore();
   const { items } = useCartStore();
 
-  useEffect(() => {
-    fetchProducts()
-      .then(setProducts)
-      .finally(() => setIsLoading(false));
-  }, []);
+  const categories = Array.from(new Set(initialProducts.map(p => p.category)));
 
-  // Obtener categorías únicas
-  const categories = Array.from(new Set(products.map(p => p.category)));
-
-  // Filtrar productos
-  const filteredProducts = products
+  const filteredProducts = initialProducts
     .filter(p => !selectedCategory || p.category === selectedCategory)
     .filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  // Icono por categoría
   const getCategoryIcon = (category: string) => {
     const lower = category.toLowerCase();
     if (lower.includes('bebida')) return Beer;
@@ -41,41 +32,15 @@ export default function MenuPage() {
   };
 
   const cartItemsCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  const bebidas = products.filter(p => p.category === 'Bebidas');
+  const bebidas = initialProducts.filter(p => p.category === 'Bebidas');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
-      {/* Header fijo */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm shadow-sm">
+    <>
+      {/* Barra de búsqueda y filtros */}
+      <div className="sticky top-[73px] z-30 bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4">
-            {/* Volver */}
-            <Link href="/" className="flex items-center gap-2 text-stone-600 hover:text-amber-600 transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-              <span className="hidden sm:inline font-medium">Volver</span>
-            </Link>
-
-            {/* Título */}
-            <h1 className="text-xl md:text-2xl font-bold text-stone-800">
-              🍽️ Menú Completo
-            </h1>
-
-            {/* Carrito */}
-            <button
-              onClick={() => setIsCartOpen(true)}
-              className="relative p-2 bg-amber-100 hover:bg-amber-200 rounded-full transition-colors"
-            >
-              <ShoppingBag className="w-6 h-6 text-amber-700" />
-              {cartItemsCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
-                  {cartItemsCount}
-                </span>
-              )}
-            </button>
-          </div>
-
           {/* Buscador */}
-          <div className="mt-4 relative">
+          <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
             <input
               type="text"
@@ -87,7 +52,7 @@ export default function MenuPage() {
           </div>
 
           {/* Filtros de categoría */}
-          <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-2 overflow-x-auto pb-2">
             <button
               onClick={() => setSelectedCategory(null)}
               className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium whitespace-nowrap transition-all ${
@@ -118,24 +83,11 @@ export default function MenuPage() {
             })}
           </div>
         </div>
-      </header>
+      </div>
 
-      {/* Contenido */}
+      {/* Contenido principal */}
       <main className="max-w-7xl mx-auto px-4 py-6">
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="bg-white rounded-2xl overflow-hidden animate-pulse shadow-sm">
-                <div className="h-48 bg-stone-200" />
-                <div className="p-4 space-y-3">
-                  <div className="h-4 bg-stone-200 rounded w-3/4" />
-                  <div className="h-3 bg-stone-100 rounded w-1/2" />
-                  <div className="h-6 bg-amber-100 rounded w-1/3" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : filteredProducts.length === 0 ? (
+        {filteredProducts.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">🔍</div>
             <h3 className="text-xl font-semibold text-stone-700 mb-2">No se encontraron productos</h3>
@@ -159,8 +111,21 @@ export default function MenuPage() {
         )}
       </main>
 
+      {/* Botón flotante de carrito */}
+      <button
+        onClick={() => setIsCartOpen(true)}
+        className="fixed bottom-6 right-6 z-50 p-4 bg-amber-500 hover:bg-amber-600 text-white rounded-full shadow-2xl transition-all transform hover:scale-110"
+      >
+        <ShoppingBag className="w-6 h-6" />
+        {cartItemsCount > 0 && (
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold">
+            {cartItemsCount}
+          </span>
+        )}
+      </button>
+
       {/* Cart Drawer */}
       <CartDrawer visible={isCartOpen} onClose={() => setIsCartOpen(false)} bebidas={bebidas} />
-    </div>
+    </>
   );
 }

@@ -1,26 +1,269 @@
 @import "tailwindcss";
 
+/* ========== Paleta de Colores Elegante ========== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Colores principales */
+  --primary: #c2410c;        /* Naranja quemado elegante */
+  --primary-light: #ea580c;
+  --primary-dark: #9a3412;
+  
+  /* Fondos cálidos */
+  --bg-cream: #fdf8f3;       /* Crema suave */
+  --bg-warm: #f9f5f0;        /* Beige cálido */
+  --bg-light: #fefcfa;       /* Casi blanco cálido */
+  
+  /* Acentos */
+  --accent-gold: #b45309;    /* Dorado oscuro */
+  --accent-warm: #78350f;    /* Marrón cálido */
+  
+  /* Textos */
+  --text-dark: #1c1917;      /* Casi negro cálido */
+  --text-medium: #44403c;    /* Gris cálido */
+  --text-light: #78716c;     /* Gris suave */
+  
+  /* Superficies */
+  --surface-light: #faf7f5;
+  --surface-card: #ffffff;
+  --border-light: #e7e5e4;
+  
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+body {
+  background: linear-gradient(180deg, var(--bg-cream) 0%, var(--bg-warm) 50%, var(--bg-cream) 100%);
+  color: var(--text-dark);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+/* ========== Animaciones Personalizadas ========== */
+
+/* Animación de fade in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Animación de fade in desde abajo */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animación de fade in desde la izquierda */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Animación de fade in desde la derecha */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Animación de scale */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Bounce lento */
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-3deg);
+  }
+}
+
+/* Shimmer para efectos de brillo */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Clases de animación */
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in-left {
+  animation: fadeInLeft 0.8s ease-out forwards;
+}
+
+.animate-fade-in-right {
+  animation: fadeInRight 0.8s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.6s ease-out forwards;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+}
+
+/* Clases para elementos con scroll reveal */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-reveal-left.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-reveal-right.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Delays para animaciones escalonadas */
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+
+/* Smooth scroll para toda la página */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ========== Utilidades Personalizadas ========== */
+
+/* Efecto vidrio */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Texto con gradiente */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Sombras suaves */
+.shadow-soft {
+  box-shadow: 0 4px 20px rgba(28, 25, 23, 0.08);
+}
+
+.shadow-warm {
+  box-shadow: 0 8px 30px rgba(194, 65, 12, 0.12);
+}
+
+/* Fondos con patrón sutil */
+.bg-pattern {
+  background-image: radial-gradient(circle at 1px 1px, rgba(194, 65, 12, 0.03) 1px, transparent 0);
+  background-size: 32px 32px;
+}
+
+/* Cards elegantes */
+.card-elegant {
+  background: var(--surface-card);
+  border: 1px solid var(--border-light);
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(28, 25, 23, 0.06);
+  transition: all 0.3s ease;
+}
+
+.card-elegant:hover {
+  box-shadow: 0 8px 30px rgba(28, 25, 23, 0.1);
+  transform: translateY(-4px);
+}
+
+/* Botón primario elegante */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(194, 65, 12, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(194, 65, 12, 0.4);
+}
+
+/* Sección con fondo alternado */
+.section-warm {
+  background: linear-gradient(180deg, var(--bg-warm) 0%, var(--bg-cream) 100%);
+}
+
+.section-cream {
+  background: var(--bg-cream);
 }

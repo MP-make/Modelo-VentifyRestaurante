@@ -5,7 +5,8 @@ import { ShoppingBag, ChevronDown } from "lucide-react";
 
 export default function HeroBanner() {
   const scrollToContent = () => {
-    document.getElementById("presentacion")?.scrollIntoView({ behavior: "smooth" });
+    const nextSection = document.querySelector('#productos-destacados') || document.querySelector('main');
+    nextSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (

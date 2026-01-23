@@ -97,48 +97,53 @@ export default function ContactoSection() {
               <h4 className="font-semibold mb-4">Síguenos en redes</h4>
               <div className="flex gap-4">
                 <a
-                  href="#"
+                  href="https://www.instagram.com/ventify.pe/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="bg-gradient-to-br from-purple-500 to-pink-500 p-3 rounded-full hover:scale-110 transition-transform shadow-lg"
+                  aria-label="Instagram"
                 >
                   <Instagram className="w-6 h-6" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.facebook.com/VentifyPE"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="bg-blue-600 p-3 rounded-full hover:scale-110 transition-transform shadow-lg"
+                  aria-label="Facebook"
                 >
                   <Facebook className="w-6 h-6" />
                 </a>
                 <a
-                  href="#"
+                  href="https://wa.me/51943952732"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="bg-green-500 p-3 rounded-full hover:scale-110 transition-transform shadow-lg"
+                  aria-label="WhatsApp"
                 >
                   <MessageCircle className="w-6 h-6" />
                 </a>
               </div>
             </div>
 
-            {/* Métodos de pago */}
+            {/* Métodos de pago - LOGOS SIN FONDO BLANCO */}
             <div>
               <h4 className="font-semibold mb-4">Aceptamos</h4>
               <div className="flex items-center gap-4">
-                <div className="bg-white/90 p-2 rounded-lg">
-                  <Image
-                    src="/icono-yape.png"
-                    alt="Yape"
-                    width={40}
-                    height={40}
-                    className="object-contain"
-                  />
-                </div>
-                <div className="bg-white/90 p-2 rounded-lg">
-                  <Image
-                    src="/icono-plin.png"
-                    alt="Plin"
-                    width={40}
-                    height={40}
-                    className="object-contain"
-                  />
-                </div>
+                <Image
+                  src="/icono-yape.png"
+                  alt="Yape"
+                  width={48}
+                  height={48}
+                  className="object-contain"
+                />
+                <Image
+                  src="/icono-plin.png"
+                  alt="Plin"
+                  width={48}
+                  height={48}
+                  className="object-contain"
+                />
                 <span className="text-stone-400 text-sm ml-2">
                   Efectivo, Tarjetas de crédito y débito
                 </span>
